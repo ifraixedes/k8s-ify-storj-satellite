@@ -1,0 +1,6 @@
+nameSuffix: -local
+resources:
+- ../../base
+
+patchesStrategicMerge:
+- deployment_containers_env_vars.yaml

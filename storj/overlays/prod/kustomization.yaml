@@ -1,0 +1,17 @@
+nameSuffix: -prod
+resources:
+- ../../base
+
+secretGerator:
+- name: docker-registry-creds
+  data:
+    # TODO: write a plugging that allow to generate a secret doing the base64
+    # encoding
+    # https://github.com/kubernetes-sigs/kustomize/issues/814
+    .dockerconfigjson: ewogICJhdXRocyI6IHsKICAgICJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOnsKICAgICAgImF1dGgiOiAidGhpcy1pcy1ub3QtYS12YWxpZC1rZXkiCiAgICB9CiAgfQp9Cg==
+  type: kubernetes.io/dockerconfigjson
+
+
+patchesStrategicMerge:
+- deployment_image_pull_secrets.yaml
+- deployment_containers_env_vars.yaml

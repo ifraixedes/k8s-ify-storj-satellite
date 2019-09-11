@@ -1,0 +1,11 @@
+commonLabels:
+  app: satellite
+  version: v3
+
+images:
+- name: storjlabs/satellite
+  newTag: 2fc4d61-go1.13.0
+
+resources:
+- service.yaml
+- deployment.yaml

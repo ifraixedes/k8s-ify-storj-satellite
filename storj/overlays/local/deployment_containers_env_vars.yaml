@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: satellite
+spec:
+  template:
+    spec:
+      containers:
+        env:
+        - name: STORJ_METRICS_APP_SUFFIX
+          value: local-development
+        - name: BOOTSTRAP_ADDR
+          value: 127.0.0.1:7777
+        - name: STORJ_KADEMLIA_EXTERNAL_ADDRESS
+          value:  some-local-address:7777

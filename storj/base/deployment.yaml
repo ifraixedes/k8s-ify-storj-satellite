@@ -1,0 +1,73 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: satellite
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: satellite
+      version: v3
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: satellite
+        version: v3
+    spec:
+      containers:
+      - env:
+        - name: STORJ_LOG_LEVEL
+          value: debug
+        - name: STORJ_LOG_STACK
+          value: "true"
+        - name: IDENTITY_ADDR
+          value: :7777
+        - name: STORJ_CONSOLE_ADDRESS
+          value: 0.0.0.0:10100
+        image: storjlabs/satellite
+        name: satellite
+        ports:
+        - containerPort: 7777
+          name: grpc
+          protocol: TCP
+        - containerPort: 10100
+          name: satellite-ui
+          protocol: TCP
+        resources:
+          limits:
+            memory: "2048Mi"
+            cpu: "500m"
+          requests:
+            memory: "1024Mi"
+            cpu: "250m"
+        terminationMessagePath: /dev/termination-log
+        volumeMounts:
+        - name: satellite-config
+          mountPath: /root/.local/share/storj/satellite
+          readOnly: true
+        - name: satellite-certs
+          mountPath: /root/.local/share/storj/identity/satellite/
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 60
+      volumes:
+      - name: satellite-certs
+        secret:
+          secretName: certs
+          items:
+            - key: ca.cert
+              path: ca.cert
+            - key: identity.cert
+              path: identity.cert
+            - key: identity.key
+              path: identity.key
+      - name: satellite-config
+        configMap:
+          name: satellite
+          defaultMode: 444
